@@ -1,0 +1,69 @@
+﻿-------ERRORS---------
+/*'There was an error running the selected code generator'
+solution=
+Run Visual Studio Installer
+Click Modify
+On the right-side expand ASP.NET and web development
+check “.Net Framework project and item templates”*/
+-------------
+//problem was 
+            //".Net Core 3.0 possible object cycle was detected which is not supported"
+            //to stop it downlad Newtonsoft.Json package and add this service here
+            https://stackoverflow.com/questions/59199593/net-core-3-0-possible-object-cycle-was-detected-which-is-not-supported
+solution=
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson(options =>
+                options.SerializerSettings
+                .ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+-----------
+package restore failed
+https://stackoverflow.com/questions/44509694/error-there-was-an-error-running-the-selected-code-generator-package-restore
+solution= 
+upgrade packages to 3.1.32
+--------
+
+--------PACKAGES--------------
+//package manager console
+Install-Package Microsoft.EntityFrameworkCore -v 3.1.0
+Install-Package Microsoft.EntityFrameworkCore.Sqlite -v 3.1.0
+Install-Package Microsoft.EntityFrameworkCore.Tools -v 3.1.0
+Install-Package Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore -v 3.1.0
+Install-Package Microsoft.VisualStudio.Web.CodeGeneration.Design -v 3.1.0
+
+--------MIGRATIONS-------------------
+//package manager console
+Add-Migration -o Data/Api_MsMigrations InitialMigration
+Update-Database
+
+//add your triggers (and update etterpaa) into InitialMigration file
+ExtraMigration.Steps(migrationBuilder);
+
+--------SQLITE------------------
+//sqlite compact toolbox
+//add connection from current solution/browse/add
+
+-------SWAGGER INTERFACE------------
+If using .NET 5 there is the option to automatically add Swagger to your project.
+Since we are going to stay with
+.NET Core 3.1 for now, we need to manually add Swagger to get the same built-in documentation as shown in some tutorials
+
+1. Install NuGet package
+PM> Install-Package Swashbuckle.AspNetCore -v 5.6.3
+
+2. Add code to Startup.cs, In ConfigureServices after, services.AddControllers ();
+
+services.AddSwaggerGen(c =>
+{
+c. SwaggerDoc ("v1", new OpenApiInfo { Title = "API_MedikalSenter", Version = "v1" });
+});
+
+
+3. In Configure() inside if (env.IsDevelopment ())
+
+app.UseSwagger ();
+app.UseSwaggerUI(c => c. SwaggerEndpoint ("/swagger/v1/swagger.json", "API_MedikalSenter v1"));
+
+4.launchsettings.json/"launchUrl":"swagger",
+-------
+
+
